@@ -33,30 +33,43 @@ public class FlightService {
     /**
      * Récupère une liste paginée d’enregistrements de vols depuis la base de données, triée selon le champ et l’ordre spécifiés.
      *
-     * @param origin
-     * @param destination
      * @param sortBy
      * @param order
      * @param page
      * @param size
      * @return Flux<FlightRecord>
      */
-    public Flux<FlightRecord> getFlights(final String origin, final String destination, final String sortBy, final String order, final int page, final int size) {
-        final String normalizedSort = (sortBy == null) ? "price" : sortBy.trim().toLowerCase();
-        final String normalizedOrder = (order == null) ? "asc" : order.trim().toLowerCase();
-        final int safePage = Math.max(0, page);
-        final int safeSize = Math.max(1, size);
+    public Flux<FlightRecord> getFlights(
+            String sortBy,
+            String order,
+            int page,
+            int size
+    ) {
+        String sortField = switch (sortBy == null ? "" : sortBy.trim().toLowerCase()) {
+            case "origin" -> "origin";
+            case "destination" -> "destination";
+            default -> "price";
+        };
 
-        String sortProperty = "price";
-        if ("origin".equals(normalizedSort)) {
-            sortProperty = "origin";
-        } else if ("destination".equals(normalizedSort)) {
-            sortProperty = "destination";
-        }
+        Sort.Direction direction =
+                "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Sort.Direction direction = "desc".equals(normalizedOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        final Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by(direction, sortProperty));
+        Pageable pageable = PageRequest.of(
+                Math.max(0, page),
+                Math.max(1, size),
+                Sort.by(direction, sortField)
+        );
 
-        return flightRepository.getFlights(origin, destination, pageable);
+        return flightRepository.getFlights(pageable);
+    }
+
+    /**
+     * Recherche un vol par identifiant.
+     *
+     * @param id UUID du vol
+     * @return Mono émettant le record si trouvé
+     */
+    public Mono<FlightRecord> findById(final UUID id) {
+        return flightRepository.findById(id);
     }
 }

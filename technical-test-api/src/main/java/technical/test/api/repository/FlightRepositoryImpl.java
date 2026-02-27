@@ -19,35 +19,19 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
     }
 
     /**
-     * Get flights with pagination and sorting.
-     * @param origin
-     * @param destination
+     * Récupère les vols en fonction de l'origine, de la destination et de la pagination.
      * @param pageable
      * @return Flux<FlightRecord>
      */
     @Override
-    public Flux<FlightRecord> getFlights(final String origin, final String destination, final Pageable pageable) {
-        final int safePage = Math.max(0, pageable.getPageNumber());
-        final int safeSize = Math.max(1, pageable.getPageSize());
-
-        Query query = new Query();
-
-        if (origin != null && !origin.trim().isEmpty()) {
-            final String escaped = Pattern.quote(origin.trim());
-            query.addCriteria(Criteria.where("origin").regex("(?i).*" + escaped + ".*"));
-        }
-
-        if (destination != null && !destination.trim().isEmpty()) {
-            final String escapedDest = Pattern.quote(destination.trim());
-            query.addCriteria(Criteria.where("destination").regex("(?i).*" + escapedDest + ".*"));
-        }
-
+    public Flux<FlightRecord> getFlights(final Pageable pageable) {
+        Query q = new Query();
         if (pageable.getSort().isSorted()) {
-            query.with(pageable.getSort());
+            q.with(pageable.getSort());
         }
-
-        query.skip((long) safePage * safeSize).limit(safeSize);
-
-        return reactiveMongoTemplate.find(query, FlightRecord.class);
+        int p = Math.max(0, pageable.getPageNumber());
+        int s = Math.max(1, pageable.getPageSize());
+        q.skip((long) p * s).limit(s);
+        return reactiveMongoTemplate.find(q, FlightRecord.class);
     }
 }

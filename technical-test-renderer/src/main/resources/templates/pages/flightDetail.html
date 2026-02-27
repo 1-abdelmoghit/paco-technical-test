@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail du vol</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .card { max-width: 800px; margin: 0 auto; border: 1px solid #ddd; padding: 16px; }
+        img { max-width: 100%; height: auto; display:block; margin-bottom:12px; }
+    </style>
+</head>
+<body>
+<div class="card" th:if="${flight}">
+    <h2 th:text="${flight.origin.name} + ' → ' + ${flight.destination.name}"></h2>
+    <p><strong>Départ :</strong> <span th:text="${flight.departure}">--</span></p>
+    <p><strong>Arrivée :</strong> <span th:text="${flight.arrival}">--</span></p>
+    <p><strong>Prix :</strong> <span th:text="${flight.price}">--</span> €</p>
+    <img th:if="${flight.image}" th:src="${flight.image}" alt="image destination" />
+</div>
+
+<div th:if="${message}">
+    <p th:text="${message}"></p>
+</div>
+
+<p>
+    <a th:href="@{'/'(sort=${sort}, order=${order}, page=${page}, size=${size})}">Retour à la recherche</a>
+</p>
+</body>
+</html>

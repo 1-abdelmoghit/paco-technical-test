@@ -5,5 +5,5 @@ import reactor.core.publisher.Flux;
 import technical.test.api.record.FlightRecord;
 
 public interface FlightRepositoryCustom {
-    Flux<FlightRecord> getFlights(final String origin, final String destination, final Pageable pageable);
+    Flux<FlightRecord> getFlights(final Pageable pageable);
 }

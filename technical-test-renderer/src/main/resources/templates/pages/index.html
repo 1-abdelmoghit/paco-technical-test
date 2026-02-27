@@ -112,6 +112,7 @@
                 <th scope="col">Arrivée à</th>
                 <th scope="col">Prix</th>
                 <th scope="col">Photo</th>
+                <th scope="col">Action</th>
             </tr>
             <tr th:each="flight : ${flights}">
 
@@ -123,6 +124,9 @@
                          alt="Photo destination"
                          style="max-width:100px; max-height:60px; object-fit:cover;"
                          loading="lazy" />
+                </td>
+                <td>
+                    <a th:href="@{/flight/{id}(id=${flight.id}, sort=${sort}, order=${order}, page=${page}, size=${size})}">Voir</a>
                 </td>
 
             </tr>

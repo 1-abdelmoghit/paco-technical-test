@@ -12,6 +12,7 @@ import technical.test.renderer.viewmodels.FlightViewModel;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Component
@@ -26,21 +27,9 @@ public class TechnicalApiClient {
         this.webClient = webClientBuilder.baseUrl(technicalApiProperties.getUrl()).build();
     }
 
-    public Flux<FlightViewModel> getFlights() {
-        return webClient
-                .get()
-                .uri(technicalApiProperties.getFlightPath())
-                .retrieve()
-                .bodyToFlux(FlightViewModel.class)
-                .onErrorResume(err -> {
-                    log.warn("Impossible de récupérer les vols depuis l'API technique: {}", err.toString());
-                    return Flux.empty();
-                });
-    }
+    public Flux<FlightViewModel> getFlights(String sort, String order, Integer page, Integer size) {
 
-    public Flux<FlightViewModel> getFlights(String location, String origin, String destination,  String sort, String order, Integer page, Integer size) {
-
-        Map<String, Object> params = getStringObjectMap(location, origin, destination, sort, order, page, size);
+        Map<String, Object> params = getStringObjectMap( sort, order, page, size);
 
         return webClient.get()
                 .uri(uriBuilder -> {
@@ -56,11 +45,20 @@ public class TechnicalApiClient {
                 });
     }
 
-    private static @NonNull Map<String, Object> getStringObjectMap(String location, String origin, String destination, String sort, String order, Integer page, Integer size) {
+    public Mono<FlightViewModel> getFlightById(final UUID id) {
+        return webClient
+                .get()
+                .uri(technicalApiProperties.getUrl() + technicalApiProperties.getFlightPath() + "/" + id.toString())
+                .retrieve()
+                .bodyToMono(FlightViewModel.class)
+                .onErrorResume(err -> {
+                    log.warn("Impossible de récupérer le vol par id {}: {}", id, err.toString());
+                    return Mono.empty();
+                });
+    }
+
+    private static @NonNull Map<String, Object> getStringObjectMap(String sort, String order, Integer page, Integer size) {
         Map<String, Object> params = new LinkedHashMap<>();
-        if (location != null && !location.isBlank()) params.put("location", location);
-        if (origin != null && !origin.isBlank())     params.put("origin", origin);
-        if (destination != null && !destination.isBlank()) params.put("destination", destination);
         if (sort != null && !sort.isBlank())         params.put("sort", sort);
         if (order != null && !order.isBlank())       params.put("order", order);
         if (page != null)                            params.put("page", page);

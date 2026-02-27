@@ -15,8 +15,12 @@ public class FlightFacade {
         this.flightService = flightService;
     }
 
-    public Flux<FlightViewModel> getFlights(final String location, final String origin, final String destination, final String sort, final String order, final Integer page, final Integer size) {
-        return this.flightService.getFlights(location, origin, destination, sort, order, page, size);
+    public Flux<FlightViewModel> getFlights( final String sort, final String order, final Integer page, final Integer size) {
+        return this.flightService.getFlights(sort, order, page, size);
+    }
+
+    public Mono<FlightViewModel> getFlightById(final java.util.UUID id) {
+        return this.flightService.getFlightById(id);
     }
 
     public Mono<FlightViewModel> createFlight(FlightViewModel flight) {
