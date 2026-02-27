@@ -22,8 +22,8 @@ public class FlightFacade {
      * Récupération de la liste des vols : on récupère les records, puis on les convertit en représentation.
      * La conversion doit inclure la résolution des aéroports d’origine et de destination pour enrichir la représentation.
      */
-    public Flux<FlightRepresentation> getFlights(final String sortBy, final String order, final int page, final int size) {
-        return flightService.getFlights( sortBy, order, page, size)
+    public Flux<FlightRepresentation> getFlights(final String origin, final String destination, final String sortBy, final String order, final int page, final int size) {
+        return flightService.getFlights( origin, destination, sortBy, order, page, size)
                 .flatMap(this::toRepresentation);
     }
 

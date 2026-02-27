@@ -20,12 +20,14 @@ public class FlightEndpoint {
      */
     @GetMapping
     public Flux<FlightRepresentation> getFlights(
+            @RequestParam(value = "origin", required = false) final String origin,
+            @RequestParam(value = "destination", required = false) final String destination,
             @RequestParam(value = "sort", required = false, defaultValue = "price") final String sort,
             @RequestParam(value = "order", required = false, defaultValue = "asc") final String order,
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "6") final Integer size
     ) {
-        return flightFacade.getFlights(sort, order, page, size);
+        return flightFacade.getFlights(origin, destination, sort, order, page, size);
     }
 
     /**

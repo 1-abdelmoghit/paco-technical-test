@@ -1,8 +1,9 @@
 package technical.test.api.repository;
 
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import technical.test.api.record.FlightRecord;
 
 public interface FlightRepositoryCustom {
-    Flux<FlightRecord> getFlights(String sortBy, String order, int page, int size);
+    Flux<FlightRecord> getFlights(final String origin, final String destination, final Pageable pageable);
 }

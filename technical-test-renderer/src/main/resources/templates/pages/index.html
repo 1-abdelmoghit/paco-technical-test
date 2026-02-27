@@ -65,20 +65,47 @@
             letter-spacing: 1px;
             font-family: sans-serif;
             font-size: 0.8rem;
+            width: 100%;
         }
+
+        .filters {
+            text-align:center; margin-bottom:16px;
+        }
+
+        .filters label { margin-right:6px; }
     </style>
 </head>
 <body>
 <header>
     <h1>Recherche de Vols</h1>
+    <p style="text-align:center; margin-top:8px;"><a href="/admin">Accéder à la page d'administration</a></p>
 </header>
 
 <section>
     <!-- Contenu de la recherche de vols -->
     <h2>Bienvenue sur notre site de recherche de vols</h2>
     <p>Commencez votre aventure en trouvant les meilleurs vols disponibles.</p>
-    <!-- Ajoutez ici le formulaire de recherche de vols ou d'autres éléments pertinents -->
-    <ul>
+
+    <!-- Formulaire de filtres : uniquement tri sur price/origin/destination et ordre -->
+    <form method="get" th:action="@{/}" class="filters">
+
+
+        <label for="sort">Trier</label>
+        <select id="sort" name="sort">
+            <option th:value="'price'" th:selected="${sort == 'price'}">Trier par prix</option>
+            <option th:value="'origin'" th:selected="${sort == 'origin'}">Trier par origine</option>
+            <option th:value="'destination'" th:selected="${sort == 'destination'}">Trier par destination</option>
+        </select>
+
+        <label for="order">Ordre</label>
+        <select id="order" name="order">
+            <option th:value="'asc'" th:selected="${order == 'asc'}">Ascendant</option>
+            <option th:value="'desc'" th:selected="${order == 'desc'}">Descendant</option>
+        </select>
+
+        <button type="submit">Appliquer</button>
+    </form>
+
         <table>
             <tr>
                 <th scope="col">Départ de</th>
@@ -87,11 +114,10 @@
                 <th scope="col">Photo</th>
             </tr>
             <tr th:each="flight : ${flights}">
+
                 <td th:text="${flight.origin.name}"></td>
                 <td th:text="${flight.destination.name}"></td>
-
                 <td th:text="${#numbers.formatDecimal(flight.price, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
-
                 <td>
                     <img th:src="${flight.image}"
                          alt="Photo destination"
@@ -101,7 +127,6 @@
 
             </tr>
         </table>
-    </ul>
 </section>
 
 <footer>
